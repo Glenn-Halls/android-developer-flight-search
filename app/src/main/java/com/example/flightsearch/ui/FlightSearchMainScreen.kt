@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -20,6 +21,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -36,6 +39,7 @@ fun FlightInfoMainScreen(
     modifier: Modifier = Modifier,
     viewModel: FlightSearchViewModel = viewModel(factory = FlightSearchViewModel.factory),
 ) {
+    val fullAirportList by viewModel.getAllAirports().collectAsState(emptyList())
     BackHandler {
         onBackPress
     }
@@ -67,12 +71,21 @@ fun FlightInfoMainScreen(
                 keyboardActions = KeyboardActions(onSearch = { onSearch }),
                 modifier = Modifier.padding(16.dp).fillMaxWidth()
             )
-            Text(
-                text = "test"
-            )
             LazyColumn(
-                modifier = Modifier.fillMaxSize()
-            ) {}
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(
+                        horizontal = 8.dp,
+                        vertical = 0.dp
+                    )
+            ) {
+                items(fullAirportList) {
+                    Text(
+                        text = it.name,
+                        style = MaterialTheme.typography.displayMedium,
+                        )
+                }
+            }
         }
     }
 }

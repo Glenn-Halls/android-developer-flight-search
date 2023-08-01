@@ -10,7 +10,10 @@ import com.example.flightsearch.data.Airport
 import com.example.flightsearch.data.AirportDao
 import kotlinx.coroutines.flow.Flow
 
-class FlightSearchViewModel (private val airportDao: AirportDao) : ViewModel() {
+class FlightSearchViewModel (
+    private val airportDao: AirportDao,
+    ) : ViewModel() {
+
     fun getAllAirports(): Flow<List<Airport>> = airportDao.getAllAirports()
 
     companion object {
