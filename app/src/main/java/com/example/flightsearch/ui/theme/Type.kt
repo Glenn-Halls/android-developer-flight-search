@@ -21,7 +21,7 @@ val Typography = Typography(
     displayLarge = TextStyle(
         fontFamily = BacasimeAntique,
         fontWeight = FontWeight.Normal,
-        fontSize = 32.sp,
+        fontSize = 40.sp,
     ),
     displayMedium = TextStyle(
         fontFamily = Montserrat,

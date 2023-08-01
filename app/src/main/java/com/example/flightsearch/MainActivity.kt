@@ -3,6 +3,7 @@ package com.example.flightsearch
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import com.example.flightsearch.ui.FlightInfoMainScreen
 import com.example.flightsearch.ui.theme.FlightSearchTheme
 
 class MainActivity : ComponentActivity() {
@@ -10,6 +11,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             FlightSearchTheme {
+                FlightInfoMainScreen(
+                    onBackPress = {},
+                    onSearch = {},
+                )
             }
         }
     }
