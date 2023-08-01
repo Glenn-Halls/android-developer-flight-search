@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.flightsearch.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,7 +33,8 @@ import com.example.flightsearch.R
 fun FlightInfoMainScreen(
     onBackPress: () -> Unit,
     onSearch: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: FlightSearchViewModel = viewModel(factory = FlightSearchViewModel.factory),
 ) {
     BackHandler {
         onBackPress
@@ -64,6 +66,9 @@ fun FlightInfoMainScreen(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(onSearch = { onSearch }),
                 modifier = Modifier.padding(16.dp).fillMaxWidth()
+            )
+            Text(
+                text = "test"
             )
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
