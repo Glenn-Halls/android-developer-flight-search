@@ -34,7 +34,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
@@ -45,7 +44,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.flightsearch.R
 import com.example.flightsearch.data.Airport
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FlightInfoMainScreen(
     onBackPress: () -> Unit,
@@ -55,9 +54,14 @@ fun FlightInfoMainScreen(
 ) {
     val uiState = viewModel.uiState.collectAsState()
     val searchQuery = uiState.value.searchQuery
-    val fullAirportList by viewModel.getAllAirports().collectAsState()
-    val focusManager = LocalFocusManager.current
     val searchAirportList by viewModel.getSearchAirports(searchQuery ?: "").collectAsState()
+    val focusManager = LocalFocusManager.current
+    val airportSelected = uiState.value.airportSelected
+    val noAirportSelected = uiState.value.noAirportSelected
+    val departureList by viewModel.getDepartures(
+        airportSelected ?: Airport(1, "", "", 1)
+    ).collectAsState()
+
     BackHandler {
         onBackPress
     }
@@ -97,6 +101,10 @@ fun FlightInfoMainScreen(
                     .padding(16.dp)
                     .fillMaxWidth()
             )
+            Text(
+                text = uiState.value.airportSelected.toString(),
+            )
+            Text(departureList.toString())
             LazyColumn(
                 contentPadding = PaddingValues(
                     horizontal = dimensionResource(R.dimen.padding_medium),
@@ -108,13 +116,14 @@ fun FlightInfoMainScreen(
                 modifier = modifier
                     .fillMaxSize()
             ) {
-                items(searchAirportList) {
-                    AirportCard(
-                        airport = it,
-                        isAirportFavourite = false,
-                        onAirportClick = {it},
-                        onFavouriteClick = {it},
-                    )
+                if (noAirportSelected) {
+                    items(searchAirportList) {
+                        AirportCard(it,false, {viewModel.selectAirport(it)}, {})
+                    }
+                } else {
+                    items(departureList) {
+                        Text(it.departureCode)
+                    }
                 }
             }
         }

@@ -5,4 +5,6 @@ import com.example.flightsearch.data.Airport
 data class FlightSearchUiState(
     val airportSelected: Airport? = null,
     val searchQuery: String? = null,
-)
+) {
+    val noAirportSelected: Boolean = (airportSelected == null)
+}

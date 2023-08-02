@@ -9,6 +9,8 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.flightsearch.FlightSearchApplication
 import com.example.flightsearch.data.Airport
 import com.example.flightsearch.data.AirportDao
+import com.example.flightsearch.data.Departure
+import com.example.flightsearch.data.DepartureDao
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +19,7 @@ import kotlinx.coroutines.flow.update
 
 class FlightSearchViewModel (
     private val airportDao: AirportDao,
+    private val departureDao: DepartureDao,
     ) : ViewModel() {
 
     // Observable state holder containing the selected airport and search term
@@ -59,6 +62,14 @@ class FlightSearchViewModel (
                 initialValue = emptyList(),
             )
 
+    fun getDepartures(airport: Airport): StateFlow<List<Departure>> =
+        departureDao.getAirportDepartures(airport.id)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList(),
+            )
+
     // Get a list of all airports matching the search query
     /*TODO*/
 
@@ -69,7 +80,10 @@ class FlightSearchViewModel (
         val factory : ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as FlightSearchApplication)
-                FlightSearchViewModel(application.database.airportDao())
+                FlightSearchViewModel(
+                    application.database.airportDao(),
+                    application.database.departureDao()
+                )
             }
         }
     }

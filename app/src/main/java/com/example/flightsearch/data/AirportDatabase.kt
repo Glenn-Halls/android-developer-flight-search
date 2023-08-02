@@ -5,10 +5,11 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Airport::class], version = 1, exportSchema = false)
+@Database(entities = [Airport::class, Departure::class], version = 2, exportSchema = false)
 abstract class AirportDatabase : RoomDatabase() {
 
     abstract fun airportDao(): AirportDao
+    abstract fun departureDao(): DepartureDao
 
     companion object {
         @Volatile
@@ -16,7 +17,7 @@ abstract class AirportDatabase : RoomDatabase() {
 
         fun getDatabase(context: Context): AirportDatabase{
             return Instance ?: synchronized(this) {
-                Room.databaseBuilder(context, AirportDatabase::class.java, "airport")
+                Room.databaseBuilder(context, AirportDatabase::class.java, "database")
                     .createFromAsset("database/flight_search.db")
                     .fallbackToDestructiveMigration()
                     .build()
