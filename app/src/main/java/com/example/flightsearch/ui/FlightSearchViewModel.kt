@@ -62,6 +62,14 @@ class FlightSearchViewModel (
                 initialValue = emptyList(),
             )
 
+    fun getDestinationAirports(id: Int, search: String): StateFlow<List<Airport>> =
+        airportDao.getDestinationAirports(id, search)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList(),
+            )
+
     fun getDepartures(airport: Airport): StateFlow<List<Departure>> =
         departureDao.getAirportDepartures(airport.id)
             .stateIn(

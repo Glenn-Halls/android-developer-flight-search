@@ -6,4 +6,9 @@ class OfflineAirportRepository (private val airportDao: AirportDao) : AirportRep
     override fun getAllAirports() = airportDao.getAllAirports()
     override fun getSearchAirports(search: String): Flow<List<Airport>> =
         airportDao.getSearchAirports(search)
+
+    override fun getDestinationAirports(
+        selectedAirportId: Int,
+        search: String
+    ): Flow<List<Airport>> = airportDao.getDestinationAirports(selectedAirportId, search)
 }

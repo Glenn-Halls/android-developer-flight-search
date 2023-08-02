@@ -16,4 +16,12 @@ interface AirportDao {
         ORDER BY iata_code
     """)
     fun getSearchAirports(search: String): Flow<List<Airport>>
+
+    @Query("""
+        SELECT * FROM airport
+        WHERE name LIKE '%'||:search||'%'
+        AND NOT id = :selectedAirportId
+        ORDER BY id
+    """)
+    fun getDestinationAirports(selectedAirportId: Int, search: String): Flow<List<Airport>>
 }

@@ -58,9 +58,7 @@ fun FlightInfoMainScreen(
     val focusManager = LocalFocusManager.current
     val airportSelected = uiState.value.airportSelected
     val noAirportSelected = uiState.value.noAirportSelected
-    val departureList by viewModel.getDepartures(
-        airportSelected ?: Airport(1, "", "", 1)
-    ).collectAsState()
+    val departureList by viewModel.getDestinationAirports(airportSelected?.id ?: 8, searchQuery ?: "").collectAsState()
 
     BackHandler {
         onBackPress
@@ -104,7 +102,7 @@ fun FlightInfoMainScreen(
             Text(
                 text = uiState.value.airportSelected.toString(),
             )
-            Text(departureList.toString())
+            Text(text = noAirportSelected.toString())
             LazyColumn(
                 contentPadding = PaddingValues(
                     horizontal = dimensionResource(R.dimen.padding_medium),
@@ -117,12 +115,12 @@ fun FlightInfoMainScreen(
                     .fillMaxSize()
             ) {
                 if (noAirportSelected) {
-                    items(searchAirportList) {
-                        AirportCard(it,false, {viewModel.selectAirport(it)}, {})
+                    items(searchAirportList) {airport ->
+                        AirportCard(airport,false, {viewModel.selectAirport(airport)}, {}, modifier = Modifier.fillMaxWidth())
                     }
                 } else {
                     items(departureList) {
-                        Text(it.departureCode)
+                        AirportCard(it, false, {}, {})
                     }
                 }
             }
