@@ -34,7 +34,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -43,7 +45,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.flightsearch.R
 import com.example.flightsearch.data.Airport
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun FlightInfoMainScreen(
     onBackPress: () -> Unit,
@@ -51,7 +53,11 @@ fun FlightInfoMainScreen(
     modifier: Modifier = Modifier,
     viewModel: FlightSearchViewModel = viewModel(factory = FlightSearchViewModel.factory),
 ) {
-    val fullAirportList by viewModel.getAllAirports().collectAsState(emptyList())
+    val uiState = viewModel.uiState.collectAsState()
+    val searchQuery = uiState.value.searchQuery
+    val fullAirportList by viewModel.getAllAirports().collectAsState()
+    val focusManager = LocalFocusManager.current
+    val searchAirportList by viewModel.getSearchAirports(searchQuery ?: "").collectAsState()
     BackHandler {
         onBackPress
     }
@@ -70,8 +76,8 @@ fun FlightInfoMainScreen(
                 .padding(innerPadding)
         ) {
             OutlinedTextField(
-                value = "",
-                onValueChange = { /*TODO*/ },
+                value = searchQuery ?: "",
+                onValueChange = { viewModel.updateSearch(it) },
                 label = {
                     Text(
                         text = "Search for Airport"
@@ -80,7 +86,13 @@ fun FlightInfoMainScreen(
                 singleLine = true,
                 shape = MaterialTheme.shapes.small,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(onSearch = { onSearch }),
+                keyboardActions = KeyboardActions(
+                    onSearch = {
+                        onSearch
+                        this.defaultKeyboardAction(ImeAction.Done)
+                        focusManager.clearFocus()
+                    }
+                ),
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
@@ -96,7 +108,7 @@ fun FlightInfoMainScreen(
                 modifier = modifier
                     .fillMaxSize()
             ) {
-                items(fullAirportList) {
+                items(searchAirportList) {
                     AirportCard(
                         airport = it,
                         isAirportFavourite = false,
