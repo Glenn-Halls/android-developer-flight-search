@@ -11,4 +11,5 @@ class OfflineAirportRepository (private val airportDao: AirportDao) : AirportRep
         selectedAirportId: Int,
         search: String
     ): Flow<List<Airport>> = airportDao.getDestinationAirports(selectedAirportId, search)
+
 }

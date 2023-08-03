@@ -12,7 +12,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             FlightSearchTheme {
                 FlightInfoMainScreen(
-                    onBackPress = {},
                     onSearch = {},
                 )
             }

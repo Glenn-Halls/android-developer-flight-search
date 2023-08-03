@@ -1,6 +1,7 @@
 package com.example.flightsearch.data
 
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
@@ -8,4 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface DepartureDao {
     @Query("SELECT * FROM favorite WHERE id = :id")
     fun getAirportDepartures(id: Int): Flow<List<Departure>>
+
+    @Insert
+    suspend fun addFlightDetails(departure: Departure)
 }

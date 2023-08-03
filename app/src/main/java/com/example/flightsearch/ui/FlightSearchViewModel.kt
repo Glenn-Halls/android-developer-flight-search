@@ -1,5 +1,6 @@
 package com.example.flightsearch.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -77,6 +78,34 @@ class FlightSearchViewModel (
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = emptyList(),
             )
+
+    suspend fun addFlightFromClick(destinationAirport: Airport) =
+        try {
+            addFlight(
+                originAirport = uiState.value.airportSelected ?: Airport(0, "", "", 0),
+                destinationAirport = destinationAirport
+            )
+        } catch (e: Exception) {
+            Log.d("SQLite Insert Error", "Duplicate insertion")
+        }
+
+    fun resetToMain() {
+        _uiState.update {
+            it.copy(
+                airportSelected = null,
+                searchQuery = null,
+            )
+        }
+    }
+
+    private suspend fun addFlight(originAirport: Airport, destinationAirport: Airport) =
+        departureDao.addFlightDetails(
+            Departure(
+                id = originAirport.id + destinationAirport.id,
+                departureCode = originAirport.iataCode,
+                destinationCode =  destinationAirport.iataCode,
+            )
+        )
 
     // Get a list of all airports matching the search query
     /*TODO*/

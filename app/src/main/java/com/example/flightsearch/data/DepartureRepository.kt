@@ -4,4 +4,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface DepartureRepository {
     fun getAirportDepartures(id: Int): Flow<List<Departure>>
+    suspend fun addFlightDetails(departure: Departure)
 }

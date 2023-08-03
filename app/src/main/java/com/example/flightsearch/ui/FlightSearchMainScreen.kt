@@ -33,6 +33,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -43,11 +44,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.flightsearch.R
 import com.example.flightsearch.data.Airport
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FlightInfoMainScreen(
-    onBackPress: () -> Unit,
     onSearch: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FlightSearchViewModel = viewModel(factory = FlightSearchViewModel.factory),
@@ -60,13 +61,16 @@ fun FlightInfoMainScreen(
     val noAirportSelected = uiState.value.noAirportSelected
     val departureList by viewModel.getDestinationAirports(airportSelected?.id ?: 8, searchQuery ?: "").collectAsState()
 
+    val coroutineScope = rememberCoroutineScope()
+
+
     BackHandler {
-        onBackPress
+        viewModel.resetToMain()
     }
     Scaffold(
         topBar = {
             FlightSearchTopBar(
-                onUpButtonClick = onBackPress,
+                onUpButtonClick = { viewModel.resetToMain() },
                 modifier = modifier
             )
         }
@@ -120,7 +124,14 @@ fun FlightInfoMainScreen(
                     }
                 } else {
                     items(departureList) {
-                        AirportCard(it, false, {}, {})
+                        AirportCard(
+                            airport = it,
+                            isAirportFavourite = false,
+                            onAirportClick = { coroutineScope.launch {
+                                viewModel.addFlightFromClick(it)
+                            } },
+                            onFavouriteClick = {},
+                        )
                     }
                 }
             }
